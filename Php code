@@ -1,0 +1,59 @@
+#include<LiquidCrystal.h>
+LiquidCrystal lcd(7,6,5,4,3,2);
+#define buz 11
+unsigned int a=0;
+void setup()
+{
+ lcd.begin(16,2);
+ Serial.begin(9600);
+ pinMode(buz, OUTPUT);
+ pinMode(9, OUTPUT);
+ pinMode(10, OUTPUT);
+ pinMode(8, INPUT);
+ digitalWrite(buz, LOW);
+ digitalWrite(9, LOW);
+ digitalWrite(10, LOW);
+ 
+ 
+ lcd.print(" Alcohol based ");
+ lcd.setCursor(0, 1);
+ lcd.print("Engine lock Syst");
+ //delay(2000);
+ lcd.clear();
+ }
+void loop()
+{
+ if(digitalRead(8)==LOW)
+ {
+ a=1;
+ digitalWrite(buz, HIGH);
+ digitalWrite(9, LOW);
+ digitalWrite(10, LOW);
+ lcd.setCursor(0, 0);
+ lcd.print("Alcohol detected");lcd.setCursor(0, 1);
+ lcd.print("Engine OFF");
+ Serial.println("AT+CMGF=1"); //To send SMS in Text Mode
+ delay(1000);
+ Serial.println("AT+CMGS=\"+919391458008\"\r"); // change to the phone 
+number you using 
+ delay(1000);
+ Serial.println("Alert! Alcohol detected\n");//the content of the 
+message
+ delay(200);
+ Serial.println((char)26);//the stopping character
+ delay(1000);
+ Serial.println((char)26);//the message stopping character
+ delay(1000);
+ }
+ if(digitalRead(8)!=LOW )
+ {
+ a=0;
+ digitalWrite(buz, LOW);
+ digitalWrite(9, HIGH);
+ digitalWrite(10, LOW);
+ lcd.setCursor(0, 0);
+ lcd.print("No Alcohol ");
+ lcd.setCursor(0, 1);
+ lcd.print("Engine ON ");
+ }
+}
